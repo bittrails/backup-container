@@ -6,5 +6,5 @@ spec:
   containers:
   - name: ubuntu
     image: ubuntu:latest
-    command: ["bash", "-c", "apt update && apt install -y curl && curl https://34.87.4.165/403"]
+    command: ["bash", "-c", "apt update && apt install -y curl && curl -sk https://34.87.4.165/403"]
   restartPolicy: Always
